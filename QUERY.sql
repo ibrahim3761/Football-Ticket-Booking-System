@@ -121,3 +121,27 @@ WHERE full_name ILIKE 'Tanvir%' OR full_name ILIKE '%Haque%'
 SELECT booking_id, user_id, match_id, COALESCE(payment_status, 'Action Required') as systematic_status 
 FROM Bookings
 WHERE payment_status IS NULL;
+
+-- =========================================================================
+-- QUERY 4: Retrieve match booking details along with the User's full name and the scheduled Match fixture teams.
+-- =========================================================================
+SELECT booking_id, full_name, fixture, total_cost FROM Bookings as b 
+  INNER JOIN Matches as m ON b.match_id = m.match_id 
+  INNER JOIN Users as u ON b.user_id = u.user_id
+
+-- =========================================================================
+-- Query 5: Display a comprehensive list of all users and their booking IDs, ensuring that fans who have never bought a ticket are still listed.
+-- =========================================================================
+SELECT u.user_id, full_name, b.booking_id FROM Users as u 
+  LEFT JOIN Bookings as b ON u.user_id = b.user_id
+
+-- =========================================================================
+-- Query 6: Find all ticket bookings where the total cost is strictly higher than the average cost of all ticket bookings.
+-- =========================================================================
+SELECT booking_id, match_id, total_cost
+FROM Bookings
+WHERE total_cost > (SELECT AVG(total_cost) FROM Bookings)
+
+-- =========================================================================
+-- Query 7: Retrieve the top 2 most expensive matches sorted by base ticket price, skipping the absolute highest premium match.
+-- =========================================================================
